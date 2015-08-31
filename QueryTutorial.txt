@@ -1,0 +1,88 @@
+Task #4   SQL SubQueryTutorial
+
+create table Departament
+(
+ID int not null Primary Key,
+City varchar(50) not null
+)
+go
+create table Staff
+(
+ID int not null Foreign Key REFERENCES Departament(ID),
+FirstName varchar(50) not null,
+LastName  varchar(50) not null,
+Salary float not null,
+DepartId int not null
+)
+go
+delete from Staff
+insert into Departament(ID,City)
+values(23,'Lviv'),
+(15,'Kiev'),
+(245,'Kharkiv')
+go
+insert into Staff(ID,FirstName,LastName,Salary,DepartId)
+values
+(15,'Maks','Kucheruk',500,33),
+(23,'Anton','Gerashenko',230,43),
+(23,'Anja','Kovalenko',450,65),
+(15,'Dima','Gerashenko',1200,42),
+(245,'Vanja','Saharov',650,11),
+(23,'Ivan','Smalkov',160,11),
+(23,'Sasha','Jaremchyk',100,11),
+(23,'Anton','Gerashenko',560,11)
+
+	//Вывести список работников, зарплата которых ниже 300 $ и которые работают во Львове. 
+Select St.FirstName,St.LastName,St.DepartId from Staff as St
+inner join Departament as Dept
+on St.ID = Dept.ID
+where St.Salary<300 and St.ID=23
+
+	//Вывести список имен работников (без повторов, упорядочен по алфавиту)
+Select distinct FirstName from Staff
+order by FirstName
+
+	//Посчитать сколько работников у компании
+Select COUNT(FirstName) from Staff
+
+	//Получить список количества работников в подразделении Lviv
+Select Count(FirstName) from Staff
+where ID = 23
+
+	//Получить список количества работников в каждом подразделении. 
+Select COUNT(FirstName) from Staff
+group by ID
+
+	//Выберите список городов, содержащие букву 'L' в начале слова.
+Select City  from Departament
+where Charindex('L',City) = 1;
+
+	//Выберите список людей, имеющих однофамильцев;
+Select LastName from Staff
+group by LastName
+Having COUNT(LastName)>1
+	
+	//Выберите список людей, имеющих несколько полных совпадений имени и фамилии, которые, к тому же, работают  в городе 'Lviv'. 
+Select St.FirstName, St.LastName, Depart.City from Staff as St
+join Departament as Depart
+on St.ID = Depart.ID
+group by St.FirstName,St.LastName, Depart.City
+Having COUNT( St.FirstName)>1
+
+	//Получить список работников с фамилией, начинающейся на букву А.
+Select LastName  from Staff
+where Charindex('A',LastName) = 1;
+
+	//Получить список работников с заработной платой выше 400 $.
+select FirstName,LastName from Staff
+where Salary > 400
+	
+	//Получить средний размер заработной платы на фирме.
+Select Avg(Salary)as averageSalary from Staff
+
+	//Получить список сотрудников, получающих заработную плату в диапазоне от 200 до 500 
+Select FirstName,LastName from Staff
+where Salary>=200 And Salary<=500
+
+	//Вывести “id” подразделения, в котором сотрудники получают максимальную заработную плату;
+Select Max(Salary) as maxSalary from Staff
